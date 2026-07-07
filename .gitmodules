@@ -21,7 +21,7 @@
 	url = https://github.com/lowRISC/ariane-ethernet.git
 [submodule "corev_apu/riscv-dbg"]
 	path = corev_apu/riscv-dbg
-	url = https://github.com/pulp-platform/riscv-dbg.git
+	url = https://github.com/KilyannBrault/riscv-dbg.git
 [submodule "corev_apu/rv_plic"]
 	path = corev_apu/rv_plic
 	url = https://github.com/pulp-platform/rv_plic.git
@@ -33,7 +33,7 @@
 	url = https://github.com/pulp-platform/common_verification.git
 [submodule "verif/core-v-verif"]
 	path = verif/core-v-verif
-	url = https://github.com/openhwgroup/core-v-verif
+	url = https://github.com/openhwgroup/core-v-verif.git
 [submodule "core/cvfpu"]
 	path = core/cvfpu
 	url = https://github.com/openhwgroup/cvfpu.git
