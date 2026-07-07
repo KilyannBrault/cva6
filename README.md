@@ -1,13 +1,44 @@
 # CVA6 MPSoC
 
+This subfork of the CVA6 occurs as my master's final degree internship to implement a CVA6 core on a ZCU104 for later security research.
+
+Originally, the CVA6 only supported implementation on the [Genesys 2 board](https://reference.digilentinc.com/reference/programmable-logic/genesys-2/reference-manual) and the [Agilex 7 Development Kit](https://www.intel.la/content/www/xl/es/products/details/fpga/development-kits/agilex/agf014.html). The fork I'm based on implements on the [AMD Zynq MPSoC Ultrascale+ ZCU104 board](https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/zcu104.html) I use, and also on the [PYNQ-Z2 board](https://www.amd.com/en/corporate/university-program/aup-boards/pynq-z2.html).
+
+- The first step of my project is to implement direct access to the JTAG channel from the USB cable instead of booting an Arm-side Linux and accessing it through a Xilinx Virtual Cable (XVC) intermediary, to remove total dependence on the PS-side.
+
+  Instead of an AXI-to-JTAG interconnection between the PS-side and the Debug Module, the JTAG TAP logic is passed to the internal BSCANE2 tunnels to interconnect with the PL's JTAG.
+
+  To do so, I updated the [riscv-dbg](https://github.com/KilyannBrault/riscv-dbg) submodule to add BSCAN support, and patched the DTMCS register to add a minimum of 4 cycles between DMI requests, and end one cycle later.
+
+  I also patched [OpenOCD 0.12.0](https://github.com/KilyannBrault/openocd) to add cycles based on the DTMCS register.
+
+- The second step of the project is to maximize board resources available to the implemented Linux (current step).
+
+## Installation process
+To install this project, clone it from GitHub and initialize the submodules:
+```sh
+git clone https://github.com/KilyannBrault/cva6.git
+cd cva6
+git submodule update --init --recursive
+```
+
+Then install the [RISC-V Toolchain prerequisites](util/toolchain-builder/README.md#Prerequisites) and [the toolchain itself](util/toolchain-builder/README.md#Getting-started).
+
+To generate the Bitstream, please follow the instructions in [tutorials/fpga.md](tutorials/fpga.md).
+
+You also have to follow the instructions to [compile OpenOCD](https://github.com/KilyannBrault/openocd#installation-instructions), and to [compile and boot Linux on a SD card](https://github.com/NicolasDerumigny/cva6-sdk#booting-from-an-sd-card). You also need a [MTA8ATF1G64HZ-compatible SO-DIMM memory](https://www.micron.com/products/memory/dram-modules/sodimm/part-catalog/part-detail/mta8atf1g64hz-3g2r1) and a [PMOD-microSD card adapter](https://digilent.com/reference/pmod/pmodmicrosd/start) to plug on PMOD0 port (the integrated microSD card reader cannot be use by the implementation).
+
+Finally, to debug the CVA6 core(s), follow the instructions in [tutorials/fpga.md Debugging section](tutorials/fpga.md#debugging) and/or in [OpenOCD installation](https://github.com/KilyannBrault/openocd#installation-instructions).
+
+_Derumigny's Readme_
+***
+
 This fork of the CVA6 contains several experimental changes compared to the upstream version for
 research purposes. Main changes are:
-- Wrapping of the CoreV SoC core elements in Vivado 2021.1-compatible block design primitives (based
-  initially on [this project](https://github.com/cispa/CVA6-Vivado-Project-with-Xilinx-AXI-Ethernet/)).
-- Support of the ZCU104 (@ 50 / 100 MHz) and PYNQ-Z2 (@ 25 MHz) boards
-- (Modified) [Linux image creation toolchain](https://github.com/NicolasDerumigny/cva6-sdk/); see
-the [FPGA implementation documentation](tutorials/fpga.md) for more details
-- Experimental dual-core, shared L1D configuration
+  - Wrapping of the CoreV SoC core elements in Vivado 2024.1-compatible block design primitives (based initially on [this project](https://github.com/cispa/CVA6-Vivado-Project-with-Xilinx-AXI-Ethernet/)).
+  - Support of the ZCU104 (@ 50 / 75 MHz) and PYNQ-Z2 (@ 25 MHz) boards
+  - (Modified) [Linux image creation toolchain](https://github.com/NicolasDerumigny/cva6-sdk/); see the [FPGA implementation documentation](tutorials/fpga.md) for more details
+  - Experimental dual-core, shared L1D configuration
 
 This fork is manually kept up-to-date with respect to the upstream repo on a case-by-case basis.
 
