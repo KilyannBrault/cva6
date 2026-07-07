@@ -1,54 +1,54 @@
-XLEN ?= 64
+XLEN         ?= 64
 CROSSCOMPILE ?= riscv-none-elf-
 
 ifeq ($(BOARD), nexys_video)
-DRAM_SIZE_64 ?= 0x20000000 #512MB
-DRAM_SIZE_32 ?= 0x08000000 #128MB
-CLOCK_FREQUENCY ?= 25000000 #25MHz
-HALF_CLOCK_FREQUENCY ?= 12500000 #12.5MHz
-UART_BITRATE ?= 57600
-HAS_ETHERNET ?= 0
+    DRAM_SIZE_64         ?= 0x20000000 #512MB
+    DRAM_SIZE_32         ?= 0x08000000 #128MB
+    CLOCK_FREQUENCY      ?= 25000000   #25MHz
+    HALF_CLOCK_FREQUENCY ?= 12500000   #12.5MHz
+    UART_BITRATE         ?= 57600
+    HAS_ETHERNET         ?= 0
 else ifeq ($(PLATFORM), PLAT_AGILEX)
-DRAM_SIZE_64 ?= 0x40000000 #1GB
-DRAM_SIZE_32 ?= 0x08000000 #128MB
-CLOCK_FREQUENCY ?= 100000000 #100MHz
-HALF_CLOCK_FREQUENCY ?= 50000000 #50MHz
-UART_BITRATE ?= 115200
-HAS_ETHERNET ?= 1
+    DRAM_SIZE_64         ?= 0x40000000 #1GB
+    DRAM_SIZE_32         ?= 0x08000000 #128MB
+    CLOCK_FREQUENCY      ?= 100000000  #100MHz
+    HALF_CLOCK_FREQUENCY ?= 50000000   #50MHz
+    UART_BITRATE         ?= 115200
+    HAS_ETHERNET         ?= 1
 else ifeq ($(BOARD), zcu104)
-DRAM_SIZE_64 ?= 0x40000000 #1GB
-DRAM_SIZE_32 ?= 0x08000000 #128MB
-CLOCK_FREQUENCY ?= 75000000 #75MHz
-HALF_CLOCK_FREQUENCY ?= 37500000 #37.5MHz
-UART_BITRATE ?= 115200
-HAS_ETHERNET ?= 0
+    DRAM_SIZE_64         ?= 0x80000000 #2GB
+    DRAM_SIZE_32         ?= 0x08000000 #128MB
+    CLOCK_FREQUENCY      ?= 75000000   #75MHz
+    HALF_CLOCK_FREQUENCY ?= 37500000   #37.5MHz
+    UART_BITRATE         ?= 115200
+    HAS_ETHERNET         ?= 0
 else ifeq ($(BOARD), pynq_z2)
-DRAM_SIZE_64 ?= 0x10000000 #256MB
-DRAM_SIZE_32 ?= 0x08000000 #128MB
-CLOCK_FREQUENCY ?= 25000000 #25MHz
-HALF_CLOCK_FREQUENCY ?= 12500000 #12.5MHz
-UART_BITRATE ?= 115200
-HAS_ETHERNET ?= 0
+    DRAM_SIZE_64         ?= 0x10000000 #256MB
+    DRAM_SIZE_32         ?= 0x08000000 #128MB
+    CLOCK_FREQUENCY      ?= 25000000   #25MHz
+    HALF_CLOCK_FREQUENCY ?= 12500000   #12.5MHz
+    UART_BITRATE         ?= 115200
+    HAS_ETHERNET         ?= 0
 else
-DRAM_SIZE_64 ?= 0x40000000 #1GB
-DRAM_SIZE_32 ?= 0x08000000 #128MB
-CLOCK_FREQUENCY ?= 50000000 #50MHz
-HALF_CLOCK_FREQUENCY ?= 25000000 #25MHz
-UART_BITRATE ?= 115200
-HAS_ETHERNET ?= 1
+    DRAM_SIZE_64         ?= 0x40000000 #1GB
+    DRAM_SIZE_32         ?= 0x08000000 #128MB
+    CLOCK_FREQUENCY      ?= 50000000   #50MHz
+    HALF_CLOCK_FREQUENCY ?= 25000000   #25MHz
+    UART_BITRATE         ?= 115200
+    HAS_ETHERNET         ?= 1
 endif
 
 ifeq ($(CC),cc)
-  CC = $(RISCV)/bin/${CROSSCOMPILE}gcc
-  OBJCOPY = $(RISCV)/bin/$(CROSSCOMPILE)objcopy
+    CC = $(RISCV)/bin/${CROSSCOMPILE}gcc
+    OBJCOPY = $(RISCV)/bin/$(CROSSCOMPILE)objcopy
 endif
 SED = sed
 PLATFORM_DEFINES = -DCLOCK_FREQUENCY=$(CLOCK_FREQUENCY) -DUART_BITRATE=$(UART_BITRATE) -D$(PLATFORM)  -DXLEN=$(XLEN)
 
 ifeq ($(XLEN), 64)
-CFLAGS = $(PLATFORM_DEFINES) -Os -ggdb -march=rv64im_zicsr -mabi=lp64 -Wall -mcmodel=medany -mexplicit-relocs -ffreestanding
+    CFLAGS = $(PLATFORM_DEFINES) -Os -ggdb -march=rv64im_zicsr -mabi=lp64 -Wall -mcmodel=medany -mexplicit-relocs -ffreestanding
 else
-CFLAGS = $(PLATFORM_DEFINES) -O2 -ggdb  -march=rv32im_zicsr -mabi=ilp32 -W -Wall -mcmodel=medany -mexplicit-relocs -fno-builtin -ffreestanding
+    CFLAGS = $(PLATFORM_DEFINES) -O2 -ggdb  -march=rv32im_zicsr -mabi=ilp32 -W -Wall -mcmodel=medany -mexplicit-relocs -fno-builtin -ffreestanding
 endif
 
 CCASFLAGS = -mcmodel=medany -mexplicit-relocs
@@ -67,19 +67,19 @@ MAIN_IMG = $(MAIN:.elf=.img)
 MAIN_SV = $(MAIN:.elf=.sv)
 
 ifeq ($(PLATFORM), PLAT_AGILEX)
-DTB = cv$(XLEN)a6_agilex.dtb
+    DTB = cv$(XLEN)a6_agilex.dtb
 else
-DTB = cv$(XLEN)a6.dtb
+    DTB = cv$(XLEN)a6.dtb
 endif
 
 ifeq ($(HAS_ETHERNET), 1)
-SED_DELETE_OPT = -e "/DELETE_ETH/d"
+    SED_DELETE_OPT =
 else
-SED_DELETE_OPT =
+    SED_DELETE_OPT = -e "/DELETE_ETH/d"
 endif
 
 ifeq ($(BOARD), zcu104)
-SED_DELETE_OPT += -e "/DELETE_DUALCORE/d"
+    SED_DELETE_OPT += -e "/DELETE_DUALCORE/d"
 endif
 
 #.PHONY: clean

@@ -1,7 +1,7 @@
-set partNumber $::env(XILINX_PART)
-set boardName  $::env(XILINX_BOARD)
-set board  $::env(BOARD)
-set add_sources  $::env(ADD_SRC)
+set partNumber  $::env(XILINX_PART)
+set boardName   $::env(XILINX_BOARD)
+set board       $::env(BOARD)
+set add_sources $::env(ADD_SRC)
 set script_file [info script]
 set origin_dir [file dirname [file normalize "$script_file/../../../"]]
 
@@ -28,18 +28,18 @@ set_property -name "xpm_libraries" -value "XPM_CDC XPM_FIFO XPM_MEMORY" -objects
 set nproc [auto_execok "nproc"]
 set cores 8
 if {[llength $nproc]} {
-    if {![catch {exec $nproc "--all"} cores]} {
-        if { $cores > 32 } {
-            set_param general.maxThreads 32
-        } else {
-            set_param general.maxThreads $cores
-        }
-    }
+	if {![catch {exec $nproc "--all"} cores]} {
+		if { $cores > 32 } {
+			set_param general.maxThreads 32
+		} else {
+			set_param general.maxThreads $cores
+		}
+	}
 }
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
-  create_fileset -srcset sources_1
+	create_fileset -srcset sources_1
 }
 
 # Create 'constrs_1' fileset (if not found)
@@ -70,23 +70,25 @@ add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platfo
 add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platform/axi/src/axi_burst_splitter.sv"]
 add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platform/axi/src/axi_id_serialize.sv"]
 add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platform/axi/src/axi_serializer.sv"]
+add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platform/common_cells/include/common_cells/assertions.svh"]
 add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platform/common_cells/include/common_cells/registers.svh"]
 add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platform/common_cells/src/fall_through_register.sv"]
 add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platform/common_cells/src/id_queue.sv"]
 add_files -fileset $obj -verbose [file normalize "$origin_dir/vendor/pulp-platform/common_cells/src/onehot_to_bin.sv"]
 
 set file_obj [get_files -of_objects $obj [list \
-    "$origin_dir/corev_apu/fpga/src/$board.svh" \
-    "$origin_dir/core/cvfpu/src/common_cells/include/common_cells/registers.svh" \
-    "$origin_dir/vendor/pulp-platform/common_cells/include/common_cells/registers.svh" \
-    "$origin_dir/corev_apu/register_interface/include/register_interface/assign.svh" \
-    "$origin_dir/vendor/pulp-platform/axi/include/axi/assign.svh" \
-    "$origin_dir/corev_apu/register_interface/include/register_interface/typedef.svh" \
-    "$origin_dir/vendor/pulp-platform/axi/include/axi/typedef.svh" \
-    "$origin_dir/core/include/cvxif_types.svh" \
-    "$origin_dir/core/include/rvfi_types.svh" \
-    "$origin_dir/core/cache_subsystem/hpdcache/rtl/include/hpdcache_typedef.svh" \
-    "$origin_dir/corev_apu/fpga/src/verilog_wrappers/block_design_wrappers/ariane_xlnx_mapper.svh" \
+	"$origin_dir/corev_apu/fpga/src/$board.svh" \
+	"$origin_dir/core/cvfpu/src/common_cells/include/common_cells/registers.svh" \
+	"$origin_dir/vendor/pulp-platform/common_cells/include/common_cells/assertions.svh" \
+	"$origin_dir/vendor/pulp-platform/common_cells/include/common_cells/registers.svh" \
+	"$origin_dir/corev_apu/register_interface/include/register_interface/assign.svh" \
+	"$origin_dir/vendor/pulp-platform/axi/include/axi/assign.svh" \
+	"$origin_dir/corev_apu/register_interface/include/register_interface/typedef.svh" \
+	"$origin_dir/vendor/pulp-platform/axi/include/axi/typedef.svh" \
+	"$origin_dir/core/include/cvxif_types.svh" \
+	"$origin_dir/core/include/rvfi_types.svh" \
+	"$origin_dir/core/cache_subsystem/hpdcache/rtl/include/hpdcache_typedef.svh" \
+	"$origin_dir/corev_apu/fpga/src/verilog_wrappers/block_design_wrappers/ariane_xlnx_mapper.svh" \
 ]]
 set_property -dict { file_type {SystemVerilog} is_global_include 1} -objects $file_obj
 
@@ -109,13 +111,13 @@ set_property FILE_TYPE SystemVerilog [get_files -all ariane_xilinx.v]
 set_property top ariane_xilinx [current_fileset]
 
 set_property include_dirs { \
-    "src/axi_sd_bridge/include" \
-    "../../vendor/pulp-platform/common_cells/include" \
-    "../../vendor/pulp-platform/axi/include" \
-    "../../core/cache_subsystem/hpdcache/rtl/include" \
-    "../register_interface/include" \
-    "../../core/include" \
-    "src/verilog_wrappers/block_design_wrappers/" \
+	"src/axi_sd_bridge/include" \
+	"../../vendor/pulp-platform/common_cells/include" \
+	"../../vendor/pulp-platform/axi/include" \
+	"../../core/cache_subsystem/hpdcache/rtl/include" \
+	"../register_interface/include" \
+	"../../core/include" \
+	"src/verilog_wrappers/block_design_wrappers/" \
 } [current_fileset]
 
 set_property source_mgmt_mode All [current_project]
@@ -140,8 +142,8 @@ set_property "steps.synth_design.args.global_retiming" "on" [get_runs synth_1]
 #set_property "steps.route_design.args.directive" "Explore" [get_runs impl_1]
 #set_property "steps.phys_opt_design.args.directive" "AlternateFlowWithRetiming" [get_runs impl_1]
 
-launch_runs [get_runs synth_1] -jobs $cores
-wait_on_runs [get_runs synth_1]
+#launch_runs [get_runs synth_1] -jobs $cores
+#wait_on_runs [get_runs synth_1]
 
 # Launch synthesis
 launch_runs synth_1 -jobs $cores

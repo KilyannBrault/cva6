@@ -1,9 +1,9 @@
 bootrom_img = bootrom.img bootrom.sv
 
-RISCV_GCC?=riscv64-unknown-elf-gcc
-RISCV_OBJCOPY?=riscv64-unknown-elf-objcopy
-DTB=ariane.dtb
-PYTHON=python
+RISCV_GCC     ?= riscv64-unknown-elf-gcc
+RISCV_OBJCOPY ?= riscv64-unknown-elf-objcopy
+DTB    = ariane.dtb
+PYTHON = python
 
 all: $(bootrom_img)
 

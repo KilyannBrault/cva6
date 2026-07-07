@@ -1,20 +1,20 @@
-VIVADO ?= vivado
-VIVADOFLAGS ?= -nojournal -mode batch
+VIVADO            ?= vivado
+VIVADOFLAGS       ?= -nojournal -mode batch
 VIVADO_NEWPROJECT ?= -source scripts/prologue.tcl
 
 work-dir := work-fpga
 bit := $(work-dir)/ariane_xilinx.bit
 mcs := $(work-dir)/ariane_xilinx.mcs
 ip-dir := xilinx
-ips := xlnx_axi_clock_converter.xci  \
-       xlnx_axi_dwidth_converter.xci \
-       xlnx_axi_dwidth_converter_dm_master.xci \
-       xlnx_axi_dwidth_converter_dm_slave.xci \
-       xlnx_axi_quad_spi.xci         \
-       xlnx_axi_gpio.xci             \
-       xlnx_clk_gen.xci              \
-	   xlnx_dpti_clk.xci             \
-       xlnx_mig_7_ddr3.xci
+ips := xlnx_axi_clock_converter.xci            \
+	   xlnx_axi_dwidth_converter.xci           \
+	   xlnx_axi_dwidth_converter_dm_master.xci \
+	   xlnx_axi_dwidth_converter_dm_slave.xci  \
+	   xlnx_axi_quad_spi.xci                   \
+	   xlnx_axi_gpio.xci                       \
+	   xlnx_clk_gen.xci                        \
+	   xlnx_dpti_clk.xci                       \
+	   xlnx_mig_7_ddr3.xci
 
 bd_boards := zcu104 pynq_z2
 
@@ -53,7 +53,7 @@ program:
 	$(VIVADO) $(VIVADOFLAGS) -source scripts/program.tcl
 
 clean:
-	rm -rf *.log *.jou *.str *.mif *.xpr $(work-dir) ariane.cache ariane.hw ariane.ip_user_files scripts/vivado*
+	rm -rf *.log *.jou *.str *.mif *.xpr $(work-dir) .Xil ariane.cache ariane.gen ariane.hw ariane.ip_user_files ariane.sim ariane.srcs ariane.runs scripts/vivado*
 
 .PHONY:
 	clean

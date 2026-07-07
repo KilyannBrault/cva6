@@ -9,20 +9,20 @@ set_property ALLOW_COMBINATORIAL_LOOPS true [get_nets SoC_i/cpu_0/inst/i_cva6_wr
 
 ## UART (on PL-side UART2)
 
-#set_property -dict { PACKAGE_PIN A20  IOSTANDARD LVCMOS18 } [get_ports UART_txd        ];
-#set_property -dict { PACKAGE_PIN C19  IOSTANDARD LVCMOS18 } [get_ports UART_rxd        ];
+#set_property -dict { PACKAGE_PIN A20  IOSTANDARD LVCMOS18 } [get_ports UART_txd  ]
+#set_property -dict { PACKAGE_PIN C19  IOSTANDARD LVCMOS18 } [get_ports UART_rxd  ]
 
 ## LEDs
-#set_property -dict { PACKAGE_PIN D5   IOSTANDARD LVCMOS33 } [get_ports { led[0] }];
-#set_property -dict { PACKAGE_PIN D6   IOSTANDARD LVCMOS33 } [get_ports { led[1] }];
-#set_property -dict { PACKAGE_PIN A5   IOSTANDARD LVCMOS33 } [get_ports { led[2] }];
-#set_property -dict { PACKAGE_PIN B5   IOSTANDARD LVCMOS33 } [get_ports { led[3] }];
+#set_property -dict { PACKAGE_PIN D5   IOSTANDARD LVCMOS33 } [get_ports { led[0] }]
+#set_property -dict { PACKAGE_PIN D6   IOSTANDARD LVCMOS33 } [get_ports { led[1] }]
+#set_property -dict { PACKAGE_PIN A5   IOSTANDARD LVCMOS33 } [get_ports { led[2] }]
+#set_property -dict { PACKAGE_PIN B5   IOSTANDARD LVCMOS33 } [get_ports { led[3] }]
 
 ## Switches
-#set_property -dict { PACKAGE_PIN E4   IOSTANDARD LVCMOS33 } [get_ports { sw[0]  }];
-#set_property -dict { PACKAGE_PIN D4   IOSTANDARD LVCMOS33 } [get_ports { sw[1]  }];
-#set_property -dict { PACKAGE_PIN F5   IOSTANDARD LVCMOS33 } [get_ports { sw[2]  }];
-#set_property -dict { PACKAGE_PIN F4   IOSTANDARD LVCMOS33 } [get_ports { sw[3]  }];
+#set_property -dict { PACKAGE_PIN E4   IOSTANDARD LVCMOS33 } [get_ports {  sw[0] }]
+#set_property -dict { PACKAGE_PIN D4   IOSTANDARD LVCMOS33 } [get_ports {  sw[1] }]
+#set_property -dict { PACKAGE_PIN F5   IOSTANDARD LVCMOS33 } [get_ports {  sw[2] }]
+#set_property -dict { PACKAGE_PIN F4   IOSTANDARD LVCMOS33 } [get_ports {  sw[3] }]
 
 ## Reset on dip switch
 set_property -dict {PACKAGE_PIN E4 IOSTANDARD LVCMOS33} [get_ports sys_rst]
@@ -34,44 +34,20 @@ set_property -dict {PACKAGE_PIN E4 IOSTANDARD LVCMOS33} [get_ports sys_rst]
 # Requires an FMC mezzanine card https://www.analog.com/en/resources/reference-designs/circuits-from-the-lab/cn0506.html
 # Right/a adapter only
 
-# 125 MHz reference clock (from FMC)
-set_property -dict {PACKAGE_PIN E15 IOSTANDARD LVDS} [get_ports ref_clk_125_clk_p]
-set_property -dict {PACKAGE_PIN E14 IOSTANDARD LVDS} [get_ports ref_clk_125_clk_n]
-# Done by the clocking wizard
-#create_clock -period 8.000 -name ref_clk_125 [get_ports ref_clk_125_clk_p]
+
 # 125 MHz reference clock (from the board)
 set_property -dict {PACKAGE_PIN F23 IOSTANDARD LVDS} [get_ports clk_125_clk_p]
 set_property -dict {PACKAGE_PIN E23 IOSTANDARD LVDS} [get_ports clk_125_clk_n]
 
-# Port a - MDIO
-set_property -dict {PACKAGE_PIN A13 IOSTANDARD LVCMOS18} [get_ports mdio_mdio_io]
-set_property -dict {PACKAGE_PIN A12 IOSTANDARD LVCMOS18} [get_ports mdio_mdc]
-
 # Port a - Other
 set_property -dict {PACKAGE_PIN E17 IOSTANDARD LVCMOS18} [get_ports int_n]
-set_property -dict {PACKAGE_PIN D16 IOSTANDARD LVCMOS18} [get_ports eth_rst]
-# Port a - RGMII
-set_property -dict {PACKAGE_PIN F17 IOSTANDARD LVCMOS18} [get_ports rgmii_rxc]
-set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS18} [get_ports rgmii_rx_ctl]
-set_property -dict {PACKAGE_PIN L20 IOSTANDARD LVCMOS18} [get_ports {rgmii_rd[0]}]
-set_property -dict {PACKAGE_PIN K20 IOSTANDARD LVCMOS18} [get_ports {rgmii_rd[1]}]
-set_property -dict {PACKAGE_PIN K19 IOSTANDARD LVCMOS18} [get_ports {rgmii_rd[2]}]
-set_property -dict {PACKAGE_PIN K18 IOSTANDARD LVCMOS18} [get_ports {rgmii_rd[3]}]
-set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS18 SLEW FAST} [get_ports rgmii_txc]
-set_property -dict {PACKAGE_PIN J16 IOSTANDARD LVCMOS18 SLEW FAST} [get_ports rgmii_tx_ctl]
-set_property -dict {PACKAGE_PIN H16 IOSTANDARD LVCMOS18 SLEW FAST} [get_ports {rgmii_td[0]}]
-set_property -dict {PACKAGE_PIN G16 IOSTANDARD LVCMOS18 SLEW FAST} [get_ports {rgmii_td[1]}]
-set_property -dict {PACKAGE_PIN H19 IOSTANDARD LVCMOS18 SLEW FAST} [get_ports {rgmii_td[2]}]
-set_property -dict {PACKAGE_PIN G19 IOSTANDARD LVCMOS18 SLEW FAST} [get_ports {rgmii_td[3]}]
 
 # Port a - board led (input)
 set_property -dict {PACKAGE_PIN E18 IOSTANDARD LVCMOS18} [get_ports led_0_a]
 # Port a - right led (activity/status)
 set_property -dict {PACKAGE_PIN G18 IOSTANDARD LVCMOS18} [get_ports led_ar_c_c2m]
 set_property -dict {PACKAGE_PIN F18 IOSTANDARD LVCMOS18} [get_ports led_ar_a_c2m]
-# Port a - left led (activity/status)
-set_property -dict {PACKAGE_PIN G15 IOSTANDARD LVCMOS18} [get_ports led_al_c_c2m]
-set_property -dict {PACKAGE_PIN F15 IOSTANDARD LVCMOS18} [get_ports led_al_a_c2m]
+
 
 ## SD card
 # SPI mode,
@@ -81,8 +57,6 @@ set_property -dict {PACKAGE_PIN H7 IOSTANDARD LVCMOS33} [get_ports spi_clk_o]
 set_property -dict {PACKAGE_PIN G7 IOSTANDARD LVCMOS33} [get_ports spi_miso]
 set_property -dict {PACKAGE_PIN H8 IOSTANDARD LVCMOS33} [get_ports spi_mosi]
 set_property -dict {PACKAGE_PIN G8 IOSTANDARD LVCMOS33} [get_ports spi_ss]
-
-## Other async signals
 
 ### DDR4
 # Reset
@@ -1634,37 +1608,37 @@ set_property PACKAGE_PIN AE13 [get_ports {c0_ddr4_dq[37]}]
 set_property PACKAGE_PIN AE14 [get_ports {c0_ddr4_dq[38]}]
 set_property PACKAGE_PIN AD14 [get_ports {c0_ddr4_dq[39]}]
 set_property PACKAGE_PIN AF11 [get_ports {c0_ddr4_dm_n[4]}]
-set_property PACKAGE_PIN AG8 [get_ports {c0_ddr4_dq[40]}]
-set_property PACKAGE_PIN AF8 [get_ports {c0_ddr4_dq[41]}]
+set_property PACKAGE_PIN AG8  [get_ports {c0_ddr4_dq[40]}]
+set_property PACKAGE_PIN AF8  [get_ports {c0_ddr4_dq[41]}]
 set_property PACKAGE_PIN AG10 [get_ports {c0_ddr4_dq[42]}]
 set_property PACKAGE_PIN AG11 [get_ports {c0_ddr4_dq[43]}]
-set_property PACKAGE_PIN AG9 [get_ports {c0_ddr4_dqs_t[5]}]
-set_property PACKAGE_PIN AH9 [get_ports {c0_ddr4_dqs_c[5]}]
+set_property PACKAGE_PIN AG9  [get_ports {c0_ddr4_dqs_t[5]}]
+set_property PACKAGE_PIN AH9  [get_ports {c0_ddr4_dqs_c[5]}]
 set_property PACKAGE_PIN AH13 [get_ports {c0_ddr4_dq[44]}]
 set_property PACKAGE_PIN AG13 [get_ports {c0_ddr4_dq[45]}]
 set_property PACKAGE_PIN AJ11 [get_ports {c0_ddr4_dq[46]}]
 set_property PACKAGE_PIN AH11 [get_ports {c0_ddr4_dq[47]}]
 set_property PACKAGE_PIN AH12 [get_ports {c0_ddr4_dm_n[5]}]
-set_property PACKAGE_PIN AK9 [get_ports {c0_ddr4_dq[48]}]
-set_property PACKAGE_PIN AJ9 [get_ports {c0_ddr4_dq[49]}]
+set_property PACKAGE_PIN AK9  [get_ports {c0_ddr4_dq[48]}]
+set_property PACKAGE_PIN AJ9  [get_ports {c0_ddr4_dq[49]}]
 set_property PACKAGE_PIN AK10 [get_ports {c0_ddr4_dq[50]}]
 set_property PACKAGE_PIN AJ10 [get_ports {c0_ddr4_dq[51]}]
-set_property PACKAGE_PIN AK8 [get_ports {c0_ddr4_dqs_t[6]}]
-set_property PACKAGE_PIN AL8 [get_ports {c0_ddr4_dqs_c[6]}]
+set_property PACKAGE_PIN AK8  [get_ports {c0_ddr4_dqs_t[6]}]
+set_property PACKAGE_PIN AL8  [get_ports {c0_ddr4_dqs_c[6]}]
 set_property PACKAGE_PIN AL12 [get_ports {c0_ddr4_dq[52]}]
 set_property PACKAGE_PIN AK12 [get_ports {c0_ddr4_dq[53]}]
 set_property PACKAGE_PIN AL10 [get_ports {c0_ddr4_dq[54]}]
 set_property PACKAGE_PIN AL11 [get_ports {c0_ddr4_dq[55]}]
 set_property PACKAGE_PIN AK13 [get_ports {c0_ddr4_dm_n[6]}]
-set_property PACKAGE_PIN AM8 [get_ports {c0_ddr4_dq[56]}]
-set_property PACKAGE_PIN AM9 [get_ports {c0_ddr4_dq[57]}]
+set_property PACKAGE_PIN AM8  [get_ports {c0_ddr4_dq[56]}]
+set_property PACKAGE_PIN AM9  [get_ports {c0_ddr4_dq[57]}]
 set_property PACKAGE_PIN AM10 [get_ports {c0_ddr4_dq[58]}]
 set_property PACKAGE_PIN AM11 [get_ports {c0_ddr4_dq[59]}]
-set_property PACKAGE_PIN AN9 [get_ports {c0_ddr4_dqs_t[7]}]
-set_property PACKAGE_PIN AN8 [get_ports {c0_ddr4_dqs_c[7]}]
+set_property PACKAGE_PIN AN9  [get_ports {c0_ddr4_dqs_t[7]}]
+set_property PACKAGE_PIN AN8  [get_ports {c0_ddr4_dqs_c[7]}]
 set_property PACKAGE_PIN AP11 [get_ports {c0_ddr4_dq[60]}]
 set_property PACKAGE_PIN AN11 [get_ports {c0_ddr4_dq[61]}]
-set_property PACKAGE_PIN AP9 [get_ports {c0_ddr4_dq[62]}]
+set_property PACKAGE_PIN AP9  [get_ports {c0_ddr4_dq[62]}]
 set_property PACKAGE_PIN AP10 [get_ports {c0_ddr4_dq[63]}]
 set_property PACKAGE_PIN AN12 [get_ports {c0_ddr4_dm_n[7]}]
 set_property PACKAGE_PIN AA20 [get_ports {c0_ddr4_dq[8]}]
@@ -1712,13 +1686,13 @@ set_property PACKAGE_PIN AN19 [get_ports {c0_ddr4_dq[30]}]
 set_property PACKAGE_PIN AM19 [get_ports {c0_ddr4_dq[31]}]
 set_property PACKAGE_PIN AP19 [get_ports {c0_ddr4_dm_n[3]}]
 set_property PACKAGE_PIN AD17 [get_ports {c0_ddr4_cke[0]}]
-set_property PACKAGE_PIN AB14 [get_ports c0_ddr4_reset_n]
+set_property PACKAGE_PIN AB14 [get_ports  c0_ddr4_reset_n]
 set_property PACKAGE_PIN AA14 [get_ports {c0_ddr4_adr[15]}]
 set_property PACKAGE_PIN AA15 [get_ports {c0_ddr4_cs_n[0]}]
 set_property PACKAGE_PIN AA16 [get_ports {c0_ddr4_adr[14]}]
 set_property PACKAGE_PIN AB16 [get_ports {c0_ddr4_bg[1]}]
 set_property PACKAGE_PIN AC16 [get_ports {c0_ddr4_bg[0]}]
-set_property PACKAGE_PIN AC17 [get_ports c0_ddr4_act_n]
+set_property PACKAGE_PIN AC17 [get_ports  c0_ddr4_act_n]
 set_property PACKAGE_PIN AE15 [get_ports {c0_ddr4_odt[0]}]
 set_property PACKAGE_PIN AD15 [get_ports {c0_ddr4_adr[16]}]
 set_property PACKAGE_PIN AH16 [get_ports {c0_ddr4_adr[0]}]
@@ -1739,7 +1713,6 @@ set_property PACKAGE_PIN AL18 [get_ports {c0_ddr4_adr[12]}]
 set_property PACKAGE_PIN AK18 [get_ports {c0_ddr4_adr[13]}]
 set_property PACKAGE_PIN AL15 [get_ports {c0_ddr4_ba[0]}]
 set_property PACKAGE_PIN AL16 [get_ports {c0_ddr4_ba[1]}]
-
 ####################################################################################
 # Constraints from file : 'SoC_ddr4_0_0_board.xdc'
 ####################################################################################
@@ -1747,147 +1720,134 @@ set_property PACKAGE_PIN AL16 [get_ports {c0_ddr4_ba[1]}]
 set_false_path -from [get_ports uart2_pl_rxd]
 set_false_path -to [get_ports uart2_pl_txd]
 set_false_path -from [get_ports sys_rst]
-set_property PULLTYPE PULLUP [get_ports mdio_mdio_io]
-create_clock -period 400.000 -name mdio_clk [get_ports mdio_mdc]
-# mdio_clk is not synchronous to the core clock
-set_clock_groups -asynchronous -group [get_clocks clk_core_SoC_clk_wiz_2_0] -group [get_clocks mdio_clk]
-## MDIO output (FPGA → ADIN1300)
-# tSU = 10 ns, tH = 10 ns
-set_output_delay -clock mdio_clk -max 10.000 [get_ports mdio_mdio_io]
-set_output_delay -clock mdio_clk -min -10.000 [get_ports mdio_mdio_io]
-## MDIO input (ADIN1300 → FPGA)
-# tDV_min = 0 ns, tDV_max = 60 ns
-set_input_delay -clock mdio_clk -max 60.000 [get_ports mdio_mdio_io]
-set_input_delay -clock mdio_clk -min 0.000 [get_ports mdio_mdio_io]
-set_false_path -to [get_ports eth_rst]
-set_false_path -to [get_ports led_al_c_c2m]
-set_false_path -to [get_ports led_al_a_c2m]
-set_output_delay -clock clk_spi_SoC_clk_wiz_2_0 -max 5.000 [get_ports spi_mosi]
-set_output_delay -clock clk_spi_SoC_clk_wiz_2_0 -min -1.000 [get_ports spi_mosi]
-set_output_delay -clock clk_spi_SoC_clk_wiz_2_0 -max 5.000 [get_ports spi_clk_o]
-set_output_delay -clock clk_spi_SoC_clk_wiz_2_0 -min -1.000 [get_ports spi_clk_o]
-set_input_delay -clock clk_spi_SoC_clk_wiz_2_0 -max 7.000 [get_ports spi_miso]
-set_input_delay -clock clk_spi_SoC_clk_wiz_2_0 -min 3.000 [get_ports spi_miso]
+
+
+set_output_delay -clock clk_spi_SoC_clk_wiz_0_0 -max  5.000 [get_ports spi_mosi]
+set_output_delay -clock clk_spi_SoC_clk_wiz_0_0 -min -1.000 [get_ports spi_mosi]
+set_output_delay -clock clk_spi_SoC_clk_wiz_0_0 -max  5.000 [get_ports spi_clk_o]
+set_output_delay -clock clk_spi_SoC_clk_wiz_0_0 -min -1.000 [get_ports spi_clk_o]
+set_input_delay  -clock clk_spi_SoC_clk_wiz_0_0 -max  7.000 [get_ports spi_miso]
+set_input_delay  -clock clk_spi_SoC_clk_wiz_0_0 -min  3.000 [get_ports spi_miso]
 set_false_path -to [get_ports spi_ss]
 set_false_path -from [get_ports int_n]
 set_false_path -to [get_ports led_4bits_tri_o]
 set_false_path -to [get_ports c0_ddr4_reset_n]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[32]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[33]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[34]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[35]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[4]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[4]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[36]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[37]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[38]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[39]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dm_n[4]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[40]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[41]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[42]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[43]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[5]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[5]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[44]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[45]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[46]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[47]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dm_n[5]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[48]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[49]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[50]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[51]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[6]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[6]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[52]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[53]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[54]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[55]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dm_n[6]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[56]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[57]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[58]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[59]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[7]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[7]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[60]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[61]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[62]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[63]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dm_n[7]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[8]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[9]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[10]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[11]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[1]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[1]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[12]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[13]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[14]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[15]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dm_n[1]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[0]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[1]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[2]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[3]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[0]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[0]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[4]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[5]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[6]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[7]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dm_n[0]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[16]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[17]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[18]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[19]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[2]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[2]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[20]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[21]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[22]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[23]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dm_n[2]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[24]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[25]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[26]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[27]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[3]}]
-set_property IOSTANDARD DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[3]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[28]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[29]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[30]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dq[31]}]
-set_property IOSTANDARD POD12_DCI [get_ports {c0_ddr4_dm_n[3]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_cke[0]}]
-set_property IOSTANDARD LVCMOS12 [get_ports c0_ddr4_reset_n]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[15]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_cs_n[0]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[14]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_bg[1]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_bg[0]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports c0_ddr4_act_n]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_odt[0]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[16]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[0]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[1]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[2]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[3]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[4]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[5]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[6]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[7]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[32]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[33]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[34]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[35]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[4]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[4]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[36]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[37]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[38]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[39]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dm_n[4]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[40]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[41]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[42]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[43]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[5]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[5]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[44]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[45]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[46]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[47]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dm_n[5]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[48]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[49]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[50]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[51]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[6]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[6]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[52]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[53]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[54]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[55]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dm_n[6]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[56]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[57]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[58]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[59]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[7]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[7]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[60]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[61]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[62]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[63]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dm_n[7]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[8]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[9]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[10]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[11]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[1]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[1]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[12]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[13]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[14]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[15]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dm_n[1]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[0]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[1]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[2]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[3]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[0]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[0]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[4]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[5]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[6]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[7]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dm_n[0]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[16]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[17]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[18]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[19]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[2]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[2]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[20]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[21]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[22]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[23]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dm_n[2]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[24]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[25]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[26]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[27]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_c[3]}]
+set_property IOSTANDARD  DIFF_POD12_DCI [get_ports {c0_ddr4_dqs_t[3]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[28]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[29]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[30]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dq[31]}]
+set_property IOSTANDARD       POD12_DCI [get_ports {c0_ddr4_dm_n[3]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_cke[0]}]
+set_property IOSTANDARD        LVCMOS12 [get_ports  c0_ddr4_reset_n]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[15]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_cs_n[0]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[14]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_bg[1]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_bg[0]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports  c0_ddr4_act_n]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_odt[0]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[16]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[0]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[1]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[2]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[3]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[4]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[5]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[6]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[7]}]
 set_property IOSTANDARD DIFF_SSTL12_DCI [get_ports {c0_ddr4_ck_c[0]}]
 set_property IOSTANDARD DIFF_SSTL12_DCI [get_ports {c0_ddr4_ck_t[0]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[8]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[9]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[10]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[11]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[12]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_adr[13]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_ba[0]}]
-set_property IOSTANDARD SSTL12_DCI [get_ports {c0_ddr4_ba[1]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[8]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[9]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[10]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[11]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[12]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_adr[13]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_ba[0]}]
+set_property IOSTANDARD      SSTL12_DCI [get_ports {c0_ddr4_ba[1]}]
 
 ####################################################################################
 # Constraints from file : 'bd_ed3c_eth_buf_0.xdc'
@@ -1937,16 +1897,13 @@ create_pblock Interconnect_low_speed
 add_cells_to_pblock [get_pblocks Interconnect_low_speed] [get_cells -quiet [list \
           SoC_i/ariane_peripherals_0 \
           SoC_i/axi_bootrom_control \
-          SoC_i/axi_eth_led_gpio \
           SoC_i/axi_gpio_0 \
-          SoC_i/axi_jtag_0 \
           SoC_i/axi_uart16550_0 \
           SoC_i/bootrom_wrapper_0 \
           SoC_i/clint_0 \
           SoC_i/cpu_debug \
           SoC_i/cpu_reset_gen \
           SoC_i/irqconcat \
-          SoC_i/northbridge/Ethernet_Subsystem \
           {SoC_i/northbridge/axi_xbar_interface_v_0/inst/i_xbar_interface_wrapper/i_axi_xbar_intf/i_xbar/gen_mst_port_mux[10].i_axi_mux} \
           {SoC_i/northbridge/axi_xbar_interface_v_0/inst/i_xbar_interface_wrapper/i_axi_xbar_intf/i_xbar/gen_mst_port_mux[11].i_axi_mux} \
           {SoC_i/northbridge/axi_xbar_interface_v_0/inst/i_xbar_interface_wrapper/i_axi_xbar_intf/i_xbar/gen_mst_port_mux[1].i_axi_mux} \
@@ -1974,7 +1931,6 @@ add_cells_to_pblock [get_pblocks Interconnect_low_speed] [get_cells -quiet [list
           {SoC_i/northbridge/axi_xbar_interface_v_0/inst/i_xbar_interface_wrapper/i_axi_xbar_intf/i_xbar/gen_slv_port_demux[3].i_axi_aw_decode} \
           {SoC_i/northbridge/axi_xbar_interface_v_0/inst/i_xbar_interface_wrapper/i_axi_xbar_intf/i_xbar/gen_slv_port_demux[3].i_axi_demux} \
           {SoC_i/northbridge/axi_xbar_interface_v_0/inst/i_xbar_interface_wrapper/i_axi_xbar_intf/i_xbar/gen_slv_port_demux[3].i_axi_err_slv} \
-          SoC_i/northbridge/eth_led_axi_protocol_convert \
           SoC_i/northbridge/gpio_axi_dwidth_converter \
           SoC_i/northbridge/gpio_axi_dwidth_converter1 \
           SoC_i/northbridge/gpio_axi_protocol_convert \
@@ -1982,14 +1938,12 @@ add_cells_to_pblock [get_pblocks Interconnect_low_speed] [get_cells -quiet [list
           SoC_i/northbridge/uart_axi_dwidth_converter \
           SoC_i/northbridge/uart_axi_protocol_convert \
           SoC_i/proc_sys_reset_0 \
-          SoC_i/ps8_0_axi_periph \
           SoC_i/sdcard_quad_spi_axi \
           SoC_i/util_vector_logic_0 \
           SoC_i/util_vector_logic_1 \
           SoC_i/xlconcat_0 \
           SoC_i/xlslice_0 \
-          SoC_i/xlslice_1 \
-          SoC_i/zynq_ultra_ps_e_0]]
+          SoC_i/xlslice_1]]
 resize_pblock [get_pblocks Interconnect_low_speed] -add {SLICE_X0Y240:SLICE_X88Y359}
 resize_pblock [get_pblocks Interconnect_low_speed] -add {DSP48E2_X0Y96:DSP48E2_X11Y143}
 resize_pblock [get_pblocks Interconnect_low_speed] -add {RAMB18_X0Y96:RAMB18_X2Y143}
@@ -2009,11 +1963,6 @@ resize_pblock [get_pblocks lsu_0] -add {DSP48E2_X7Y72:DSP48E2_X13Y119}
 resize_pblock [get_pblocks lsu_0] -add {RAMB18_X2Y72:RAMB18_X4Y119}
 resize_pblock [get_pblocks lsu_0] -add {RAMB36_X2Y36:RAMB36_X4Y59}
 set_property PARENT Core_0 [get_pblocks lsu_0]
-
-
-
-
-
 
 
 set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
