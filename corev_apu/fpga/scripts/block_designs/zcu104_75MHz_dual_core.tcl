@@ -422,6 +422,7 @@ proc create_root_design { parentCell } {
 	] $clk_300mhz
 
 	set led_4bits [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 led_4bits ]
+	set push_button_4bits [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 push_button_4bits ]
 
 	set uart2_pl [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:uart_rtl:1.0 uart2_pl ]
 
@@ -605,6 +606,7 @@ proc create_root_design { parentCell } {
 	set axi_gpio_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0 ]
 	set_property -dict [list \
 		CONFIG.GPIO_BOARD_INTERFACE {led_4bits} \
+		CONFIG.GPIO2_BOARD_INTERFACE {push_button_4bits} \
 		CONFIG.USE_BOARD_FLOW {true} \
 	] $axi_gpio_0
 
@@ -693,7 +695,8 @@ proc create_root_design { parentCell } {
 
 
 	# Create interface connections
-	connect_bd_intf_net -intf_net axi_gpio_0_GPIO [get_bd_intf_ports led_4bits] [get_bd_intf_pins axi_gpio_0/GPIO]
+	connect_bd_intf_net -intf_net axi_gpio_0_GPIO  [get_bd_intf_ports         led_4bits] [get_bd_intf_pins axi_gpio_0/GPIO]
+	connect_bd_intf_net -intf_net axi_gpio_0_GPIO2 [get_bd_intf_ports push_button_4bits] [get_bd_intf_pins axi_gpio_0/GPIO2]
 	connect_bd_intf_net -intf_net axi_interconnect_0_M04_AXI [get_bd_intf_pins axi_bootrom_control/S_AXI] [get_bd_intf_pins northbridge/BOOTROM_AXI]
 	connect_bd_intf_net -intf_net axi_interconnect_0_M05_AXI [get_bd_intf_pins northbridge/CLINT_AXI] [get_bd_intf_pins clint_0/s_axi_clint]
 	connect_bd_intf_net -intf_net axi_interconnect_0_M09_AXI [get_bd_intf_pins northbridge/PLIC_AXI] [get_bd_intf_pins ariane_peripherals_0/s_axi_plic]

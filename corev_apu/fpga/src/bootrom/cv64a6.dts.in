@@ -51,10 +51,44 @@
   };
   leds {
     compatible = "gpio-leds";
-    heartbeat-led {
+    led0 {
+      label = "user-led0";
+      gpios = <&xlnx_gpio 0 0>;
+      default-state = "off";
+    };
+    led1 {
+      label = "user-led1";
+      gpios = <&xlnx_gpio 0 1>;
+      default-state = "off";
+    };
+    led2 {
+      label = "user-led2";
+      gpios = <&xlnx_gpio 0 2>;
+      default-state = "off";
+    };
+    led3 {
+      label = "user-led3";
+      gpios = <&xlnx_gpio 0 3>;
+      default-state = "off";
+    };
+  };
+  pushbuttons {
+    compatible = "gpio-keys";
+    btn0 {
+      label = "user-btn0";
       gpios = <&xlnx_gpio 1 0>;
-      linux,default-trigger = "heartbeat";
-      retain-state-suspended;
+    };
+    btn1 {
+      label = "user-btn1";
+      gpios = <&xlnx_gpio 1 1>;
+    };
+    btn2 {
+      label = "user-btn2";
+      gpios = <&xlnx_gpio 1 2>;
+    };
+    btn3 {
+      label = "user-btn3";
+      gpios = <&xlnx_gpio 1 3>;
     };
   };
   L26: soc {
@@ -148,15 +182,16 @@
       gpio-controller ;
       reg = <0x0 0x40000000 0x0 0x10000 >;
       xlnx,all-inputs = <0x0>;
-      xlnx,all-inputs-2 = <0x0>;
+      xlnx,all-inputs-2 = <0xffffffff>;
       xlnx,dout-default = <0x0>;
       xlnx,dout-default-2 = <0x0>;
-      xlnx,gpio-width = <0x8>;
-      xlnx,gpio2-width = <0x8>;
+      xlnx,gpio-width = <0x4>;
+      xlnx,gpio2-width = <0x4>;
       xlnx,interrupt-present = <0x0>;
       xlnx,is-dual = <0x1>;
       xlnx,tri-default = <0xffffffff>;
       xlnx,tri-default-2 = <0xffffffff>;
+      gpio-line-names = "led0","led1","led2","led3","btn0","btn1","btn2","btn3";
     };
   };
 };
