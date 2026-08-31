@@ -72,12 +72,10 @@ else
     DTB = cv$(XLEN)a6.dtb
 endif
 
+SED_DELETE_OPT =
 ifeq ($(HAS_ETHERNET), 1)
-    SED_DELETE_OPT =
-else
-    SED_DELETE_OPT = -e "/DELETE_ETH/d"
+    SED_DELETE_OPT += -e "/DELETE_ETH/d"
 endif
-
 ifeq ($(BOARD), zcu104)
     SED_DELETE_OPT += -e "/DELETE_DUALCORE/d"
 endif
