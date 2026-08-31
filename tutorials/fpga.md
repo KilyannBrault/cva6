@@ -1,12 +1,25 @@
 # COREV-APU FPGA Emulation
 
+## Contents
+
+- [Project Overview](#project-overview)
+- [Generating a Bitstream](#generating-a-bitstream)
+- [Programming the Memory Configuration File or Bitstream](#programming-the-memory-configuration-file-or-bitstream)
+- [Booting Linux](#booting-linux)
+- [Booting zephyr RTOS](#booting-zephyr-rtos)
+- [Debugging](#debugging)
+- [Preliminary Support for OpenPiton Cache System](#preliminary-support-for-openpiton-cache-system)
+- [Re-generating the Bootcode (ZSBL)](#re-generating-the-bootcode-zsbl)
+
+## Project Overview
+
 This repo essentially provides support for the [AMD Zynq MPSoC Ultrascale+ ZCU104 board](https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/zcu104.html), in addition to the [Genesys 2 board](https://reference.digilentinc.com/reference/programmable-logic/genesys-2/reference-manual), the [Agilex 7 Development Kit](https://www.intel.la/content/www/xl/es/products/details/fpga/development-kits/agilex/agf014.html) and previously the [PYNQ-Z2 board](https://www.amd.com/en/corporate/university-program/aup-boards/pynq-z2.html).
-> Please note that since I've only focused on the ZCU104 board, support for other cited boards __may be broken__.
+> Please note that since I've only focused on the ZCU104 board, support for other cited boards or even the original ZCU104 scripts __may be broken__.
 
 - **ZCU104 (edited from [Derumigny's repo](https://github.com/NicolasDerumigny/cva6/blob/dev/xilinx_boards/tutorials/fpga.md#corev-apu-fpga-emulation))**
   - Tested on Vivado 2024.1 on Ubuntu 24.04 LTS
   - This project contains several block designs variations in [`corev_apu/fpga/scripts/block_designs/zcu104*.tcl`](../corev_apu/fpga/scripts/block_designs/), namely:
-    - [`zcu104_75MHz_dual_core.tcl`](../corev_apu/fpga/scripts/block_designs/zcu104_75MHz_dual_core.tcl): An experimental 2-core version without Ethernet support. This is the default design.
+    - [`zcu104_75MHz_dual_core.tcl`](../corev_apu/fpga/scripts/block_designs/zcu104_75MHz_dual_core.tcl) (my version): An experimental 2-core version without Ethernet support, debugging through JTAG instead of a Xilinx Virtual Cable (XVC) intermediary. This is the default design.
     - [`zcu104_75MHz_dual_core_ethernet.tcl`](../corev_apu/fpga/scripts/block_designs/zcu104_75MHz_dual_core_ethernet.tcl): An experimental 2-core version with Xilinx AXI Ethernet, originally from Derumigny. Also relies on the PULP AXI Interconnect rather than Vivado's one, bringing support of AXI5 atomics but less block design level customizability.
     - [`zcu104_100MHz_second_uart.tcl`](../corev_apu/fpga/scripts/block_designs/zcu104_100MHz_second_uart.tcl): Adds a second UART, which can be set to contain only the SBI prints module OpenSBI `platform.c` UART address modification. Useful for debugging IO deadlocks inside Linux.
     - To change the default design, delete [`zcu104.tcl`](../corev_apu/fpga/scripts/block_designs/zcu104.tcl) and create a symbolic link to the desired design:
@@ -17,7 +30,7 @@ This repo essentially provides support for the [AMD Zynq MPSoC Ultrascale+ ZCU10
     ```
   - The FPGA currently contains the following peripherals:
     - DDR4 memory controller wired to the SO-DIMM slot, using [MTA8ATF1G64HZ-compatible](https://www.micron.com/products/memory/dram-modules/sodimm/part-catalog/part-detail/mta8atf1g64hz-3g2r1) timings
-    - JTAG port (see [debugging section below](#debugging))
+    - JTAG port (see [Debugging section below](#debugging))
     - Bootrom containing [Zero Stage BootLoader (ZSBL)](#re-generating-the-bootcode-zsbl) and device tree
     - UART, routed through the integrated USB-to-Quad-UART module
     - SPI controller routed to the PMOD0 header for SDCard support, requires a [PMOD-microSD card adapter](https://digilent.com/reference/pmod/pmodmicrosd/start)
@@ -31,7 +44,7 @@ This repo essentially provides support for the [AMD Zynq MPSoC Ultrascale+ ZCU10
   - Uses a degraded 25 MHz core clock frequency (50 MHz interconnect one for faster memory/peripheral transfer speed)
   - The FPGA currently contains the following peripherals:
     - Access to the board's upper 128 MiB of DRAM (if double-booting Linux on the Arm cores, limits its usage to the 127 lower MiB with the kernel parameter `memory=128M`)
-    - JTAG port (see [debugging section below](#debugging))
+    - JTAG port (see [Debugging section below](#debugging))
     - Bootrom containing [Zero Stage BootLoader (ZSBL)](#re-generating-the-bootcode-zsbl) and device tree
     - UART routed through the PMODA lower port, requires a [PMOD-USB-UART adapter](https://digilent.com/reference/pmod/pmodusbuart/start)
     - SPI controller routed to a PMODB header for SDCard support, requires a [PMOD-micoSD adapter](https://digilent.com/reference/pmod/pmodmicrosd/start)
@@ -44,23 +57,23 @@ This repo essentially provides support for the [AMD Zynq MPSoC Ultrascale+ ZCU10
     - DDR3 memory controller
     - SPI controller to connect to an SDCard
     - Ethernet controller
-    - JTAG port (see [debugging section below](#debugging))
+    - JTAG port (see [Debugging section below](#debugging))
     - Bootrom containing [Zero Stage BootLoader (ZSBL)](#re-generating-the-bootcode-zsbl) and device tree
     - UART
     - GPIOs connected to LEDs
 
-> The ethernet controller and the corresponding network connection are still a work in progress and not functional at the moment. Expect some updates soon-ish.
+  > The Ethernet controller and the corresponding network connection are still a work in progress and not functional at the moment. Expect some updates soon-ish.
 
 - **Agilex 7** (from the [original repo](https://github.com/openhwgroup/cva6/blob/master/tutorials/fpga.md#corev-apu-fpga-emulation))
   - Tested on Quartus Prime Version 24.1.0 Pro Edition
   - The FPGA currently contains the following peripherals:
     - DDR4 memory controller
-    - JTAG port (see [debugging section below](#debugging))
+    - JTAG port (see [Debugging section below](#debugging))
     - Bootrom containing [Zero Stage BootLoader (ZSBL)](#re-generating-the-bootcode-zsbl) and device tree
     - UART
     - GPIOs connected to LEDs
 
-> The ethernet controller and the corresponding network connection, as well as the SD Card connection and the capability to boot Linux are still a work in progress and not functional at the moment. Expect some updates soon-ish.
+  > The Ethernet controller and the corresponding network connection, as well as the SD Card connection and the capability to boot Linux are still a work in progress and not functional at the moment. Expect some updates soon-ish.
 
 ## Generating a Bitstream
 - **ZCU104 / PYNQ-Z2 / Genesys 2**
@@ -68,16 +81,16 @@ This repo essentially provides support for the [AMD Zynq MPSoC Ultrascale+ ZCU10
   Set the [`RISC-V toolchain`](../util/toolchain-builder/README.md#Getting-started) path and the number of parallel jobs with:
   ```sh
   export RISCV=<path/to/your/toolchain>
-  export NUMJOBS= # It is recommended to use at most two thirds of your available CPU cores
+  export NUMJOBS=8 # It is recommended to use at most two thirds of your available CPU cores. An example is, if you have 12 logical processors, use 8 of these
   ```
 
-  Source Vivado with:
+  Source Vivado 2024.1 with:
   ```sh
-  export XILINXD_LICENSE_FILE=<path/to/your/license/file> # If you need to set your license file from a file or a distant server
+  export XILINXD_LICENSE_FILE=<path/to/your/license/file> # If you need to set your license file from a local file or from a distant server
   source <path/to/Xilinx/installation>/Vivado/2024.1/settings64.sh
   ```
 
-  To generate the FPGA bitstream (and memory configuration) yourself for the Genesys II or MPSoC boards, check the `BOARD` variable in [`Makefile`](../Makefile) to set the actual target and then run:
+  To generate the FPGA bitstream (and memory configuration) yourself for the Genesys II or MPSoC boards, check the `BOARD` variable inside the top [`Makefile`](../Makefile) to set the actual target and then run:
   ```sh
   make fpga
   ```
@@ -117,7 +130,7 @@ This repo essentially provides support for the [AMD Zynq MPSoC Ultrascale+ ZCU10
   - Select [`ariane_xilinx.bit`](../corev_apu/fpga/ariane.runs/impl_1/ariane_xilinx.bit)
   - Press Ok. Flashing will take a couple of seconds. Booting will begin as soon as flashing is done
 
-> Note: Flashing can also be performed from a booted (Arm-side) Linux using [fpga manager](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841645/Solution+Zynq+PL+Programming+With+FPGA+Manager) and `ariane_xilinx.bin` file generated with Vivado's [bootgen](https://github.com/Xilinx/bootgen).
+    > Note: Flashing can also be performed from a booted (Arm-side) Linux using [fpga manager](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841645/Solution+Zynq+PL+Programming+With+FPGA+Manager) and `ariane_xilinx.bin` file generated with Vivado's [bootgen](https://github.com/Xilinx/bootgen).
 
 - **Genesys 2** (from the [original repo](https://github.com/NicolasDerumigny/cva6/blob/dev/xilinx_boards/tutorials/fpga.md#programming-the-memory-configuration-file-or-bitstream))
   - Open Vivado 2018.2
@@ -137,28 +150,29 @@ This repo essentially provides support for the [AMD Zynq MPSoC Ultrascale+ ZCU10
   - Right after programming you can connect to the UART and see your CVA6 alive on Agilex!
   - For this you need to use the JTAG UART provided with Quartus installation
 
-```
-.$quartus_installation_path/qprogrammer/quartus/bin/juart-terminal
-juart-terminal: connected to hardware target using JTAG UART on cable
-juart-terminal: "AGF FPGA Development Kit [1-3]", device 1, instance 0
-juart-terminal: (Use the IDE stop button or Ctrl-C to terminate)
+  ```
+  .$quartus_installation_path/qprogrammer/quartus/bin/juart-terminal
+  juart-terminal: connected to hardware target using JTAG UART on cable
+  juart-terminal: "AGF FPGA Development Kit [1-3]", device 1, instance 0
+  juart-terminal: (Use the IDE stop button or Ctrl-C to terminate)
 
-Hello World!
-```
+  Hello World!
+  ```
 
 ## Booting Linux
 
-The first stage bootloader will boot from SD Card by default. Get yourself a suitable SD Card (we use [this](https://www.amazon.com/Kingston-Digital-Mobility-MBLY10G2-32GB/dp/B00519BEQO) one). Either grab a pre-built Linux image from [here](https://github.com/openhwgroup/cva6-sdk/releases) for Genesys 2 and Agilex 7 boards, or generate the Linux image yourself following the README in the [cva6-sdk repository](https://github.com/NicolasDerumigny/cva6-sdk). Prepare the SD Card by following the "Booting from SD card" section in the cva6-sdk repository.
+The First Stage BootLoader (FSBL) will boot from SD Card by default. Get yourself a suitable SD Card (we use [this](https://www.amazon.com/Kingston-Digital-Mobility-MBLY10G2-32GB/dp/B00519BEQO) one). Either grab a pre-built Linux image from [here](https://github.com/openhwgroup/cva6-sdk/releases) for Genesys 2 and Agilex 7 boards, or generate the Linux image yourself following the README in [Nicolas Derumigny's CVA6 SDK fork repository](https://github.com/NicolasDerumigny/cva6-sdk). Prepare the SD Card by following the "`Booting from SD card`" section in the cva6-sdk repository.
 
 Connect a terminal to the USB serial device opened by the FTDI chip:
 ```sh
 screen /dev/ttyUSB0 115200
 # or
 screen /dev/ttyUSB3 115200 # for ZCU104 boards
+# or other programs that can connect to serial ports like minicom
 ```
-> Note that on ZCU104 boards, assuming no USB device is plugged in other than the board, `ttyUSB0` is the JTAG channel, `ttyUSB1` and `ttyUSB2` are UART channels from the Arm-side, and `ttyUSB3` is the UART channel from the implementation. See [documentation](https://docs.amd.com/api/khub/documents/g76en4BfB6qIp2gHDRkQxg/content?Ft-Calling-App=ft%2Fturnkey-portal&Ft-Calling-App-Version=5.3.24#G5.688775).
+> Note that on ZCU104 boards, assuming no USB device is plugged in before the board, `ttyUSB0` is the JTAG channel, `ttyUSB1` and `ttyUSB2` are UART channels from the Arm-side, and `ttyUSB3` is the UART channel from the implementation. See [documentation](https://docs.amd.com/api/khub/documents/g76en4BfB6qIp2gHDRkQxg/content?Ft-Calling-App=ft%2Fturnkey-portal&Ft-Calling-App-Version=5.3.24#G5.688775).
 
-The default UART baudrate set by the bootloader and Linux is `115200`.
+The default UART baudrate set by the bootloader and Linux is `115200` bauds.
 
 After you've inserted the SD Card and programmed the FPGA you can connect to the serial port of the FPGA and should see the bootloader and afterwards Linux booting. Default username is `root`, no password required.
 
@@ -205,9 +219,10 @@ You can debug the CVA6 cores by using OpenOCD. Depending on the board and implem
 
   Instead of having the struggle of booting a Linux on the Arm-side of the board as a debug intermediary, I implemented a direct access to the board's JTAG.
 
-  I have my own patch of [OpenOCD 0.12.0](https://github.com/KilyannBrault/openocd) for accounting cycles indicated by an internal register (DTMCS, the implementation needs to add at least 4 cycles after a DMI request to complete before there is another request). To compile it and run it, please read the [README installation instructions](https://github.com/KilyannBrault/openocd#installation-instructions).
+  I have my own patch of [OpenOCD 0.12.0](https://github.com/KilyannBrault/openocd) for accounting cycles indicated by an internal register (DTMCS, the implementation needs to add at least 4 cycles after a DMI request to complete before there is another request, 6 cycles for maximum JTAG bus speed at 75 MHz). To compile it and run it, please read the [README installation instructions](https://github.com/KilyannBrault/openocd#installation-instructions).
 
-  The OpenOCD configuration file is situated in [`corev_apu/fpga/openocd_zcu104.cfg`](../corev_apu/fpga/openocd_zcu104.cfg). Check beforehand the VID:PID of the USB-cable, and that Vivado Hardware Manager is not connected to the board.
+  The OpenOCD configuration file is situated in [`corev_apu/fpga/openocd_zcu104.cfg`](../corev_apu/fpga/openocd_zcu104.cfg). Check beforehand in the configuration file the __`VID:PID`__ of the USB-cable using __`lsusb`__ (it should have a similar name like `Future Technology Devices International, Ltd FT4232H Quad HS USB-UART/FIFO IC`), and that __Vivado's Hardware Manager is not connected to the board__. If you want to reconnect to Vivado's Hardware Manager, you have to exit OpenOCD beforehand.
+  > Note that if you tried to connect Vivado's Hardware Manager while OpenOCD is still opened, close both servers, then unplug and plug again the USB cable. It also may be necessary to reprogram or even shutdown the board in some cases.
 
 - **ZCU104** / **PYNQ-Z2** (from [Derumigny's repo](https://github.com/NicolasDerumigny/cva6/blob/dev/xilinx_boards/tutorials/fpga.md#debugging))
 
@@ -261,7 +276,7 @@ You can debug the CVA6 cores by using OpenOCD. Depending on the board and implem
   Bus 005 Device 019: ID 0403:6010 Future Technology Devices International, Ltd FT2232C/D/H Dual UART/FIFO IC
   ```
 
-  If this is the case, you can go on and start openocd with the `fpga/ariane.cfg` configuration file:
+  If this is the case, you can go on and start OpenOCD with the [`fpga/ariane.cfg`](../corev_apu/fpga/ariane.cfg) configuration file:
 
   ```sh
   openocd -f fpga/ariane.cfg
@@ -286,14 +301,14 @@ You can debug the CVA6 cores by using OpenOCD. Depending on the board and implem
 
 - **Agilex 7** (from the [original repo](https://github.com/openhwgroup/cva6/blob/master/tutorials/fpga.md#debugging))
 
-  You can debug (and program) the FPGA using a modified version of OpenOCD included with Quartus installation ($quartus_installation_path/qprogrammer/quartus/bin/openocd).
+  You can debug (and program) the FPGA using a modified version of OpenOCD included with Quartus installation `$quartus_installation_path/qprogrammer/quartus/bin/openocd`.
 
   To get started, connect the micro USB port that is labeled with J13 to your machine. It is the same port that is used for the UART. Both use the JTAG interface and connect to the System Level Debugging (SLD) Hub instantiated inside the FPGA. Then the debugger connection goes to the virtual JTAG IP (vJTAG) which can be accessed with the modified version of OpenOCD.
 
-  You can start OpenOCD with the `altera/cva6.cfg` configuration file:
+  You can start OpenOCD with the [`altera/altera.cfg`](../corev_apu/altera/altera.cfg) configuration file:
 
   ```
-  > ./$quartus_installation_path/qprogrammer/quartus/bin/openocd -f altera/cva6.cfg
+  > ./$quartus_installation_path/qprogrammer/quartus/bin/openocd -f altera/altera.cfg
   Open On-Chip Debugger 0.11.0-R22.4
   Licensed under GNU GPL v2
   For bug reports, read
@@ -332,10 +347,13 @@ You can debug the CVA6 cores by using OpenOCD. Depending on the board and implem
   ```
 
 ***
-Then you will be able to either connect through `telnet` or with `gdb` from the [RISC-V toolchain](../util/toolchain-builder/README.md#Getting-started):
+Then you will be able to either connect through `telnet` or with `gdb`:
+  - If you want to compile a baremetal program, use the compilers from the [RISC-V toolchain](../util/toolchain-builder/README.md#Getting-started) named `riscv-none-elf-[gcc]` or `riscv-unknown-elf-[gcc]` inside your `<riscv-toolchain>/bin/` folder
+  - If you want to compile a Linux executable program, use the compilers from the [CVA6 SDK](https://github.com/NicolasDerumigny/cva6-sdk) inside `<cva6-sdk>/buildroot/output/host/bin/riscv64-buildroot-linux-gnu-[gcc]` or other Linux Buildroot toolchain based compiler
+  - Debugging a program is *optionnal*, but GDB will warn if no program has been passed
 
 ```gdb
-> <path/to/your/toolchain>/bin/risc-none-elf-gdb </path/to/elf>
+> <riscv-toolchain>/bin/riscv-none-elf-gdb [</path/to/elf>]
 (gdb) target remote localhost:3333
 (gdb) load
 Loading section .text, size 0x6508 lma 0x80000000
@@ -365,12 +383,12 @@ You can read or write device memory by using:
 
 CVA6 has preliminary support for the OpenPiton distributed cache system from Princeton University. To this end, a different L1 cache subsystem ([`core/cache_subsystem/wt_cache_subsystem.sv`](../core/cache_subsystem/wt_cache_subsystem.sv)) has been developed that follows a write-through protocol and that has support for cache invalidations and atomics.
 
-The corresponding integration patches will be released on [OpenPiton GitHub repository](https://github.com/PrincetonUniversity/openpiton). Check the `README` in that repository to see how to use CVA6 in the OpenPiton setting.
+The corresponding integration patches will be released on [OpenPiton GitHub repository](https://github.com/PrincetonUniversity/openpiton). Check the [`README`](https://github.com/PrincetonUniversity/openpiton#support-for-the-ariane-rv64imac-core) in that repository to see how to use CVA6 in the OpenPiton setting.
 
 To activate the different cache system, compile your code with the macro `DCACHE_TYPE`.
 
 ## Re-generating the Bootcode (ZSBL)
 
-The zero stage bootloader (ZSBL) for RTL simulation lives in [`bootrom/`](../corev_apu/bootrom/) while the bootcode for the FPGA is in [`corev_apu/fpga/src/bootrom`](../corev_apu/fpga/src/bootrom/). The RTL bootcode simply jumps to the base of the DRAM where the FSBL takes over. For the FPGA the ZSBL performs additional housekeeping. Both bootloaders pass the hartid as well as address to the device tree in argument registers `a0` and `a1` respectively.
+The zero stage bootloader (ZSBL) for RTL simulation lives in [`corev_apu/bootrom`](../corev_apu/bootrom/) while the bootcode for the FPGA is in [`corev_apu/fpga/src/bootrom`](../corev_apu/fpga/src/bootrom/). The RTL bootcode simply jumps to the base of the DRAM where the FSBL takes over. For the FPGA the ZSBL performs additional housekeeping. Both bootloaders pass the hartid as well as address to the device tree in argument registers `a0` and `a1` respectively.
 
-To re-generate the bootcode you can use the existing makefile within those directories. To generate the SystemVerilog files you will need the `bitstring` python package installed on your system.
+To re-generate the bootcode you can use the existing makefile within those directories. To generate the SystemVerilog files you will need the [`bitstring`](https://pypi.org/project/bitstring/) python package installed on your system.

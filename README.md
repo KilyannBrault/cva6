@@ -2,17 +2,20 @@
 
 This subfork of the CVA6 occurs as my master's final degree internship to implement a CVA6 core on a ZCU104 for later security research.
 
-Originally, the CVA6 only supported implementation on the [Genesys 2 board](https://reference.digilentinc.com/reference/programmable-logic/genesys-2/reference-manual) and the [Agilex 7 Development Kit](https://www.intel.la/content/www/xl/es/products/details/fpga/development-kits/agilex/agf014.html). The fork I'm based on implements on the [AMD Zynq MPSoC Ultrascale+ ZCU104 board](https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/zcu104.html) I use, and also on the [PYNQ-Z2 board](https://www.amd.com/en/corporate/university-program/aup-boards/pynq-z2.html).
+Originally, the CVA6 only supported implementation on the [Genesys 2 board](https://reference.digilentinc.com/reference/programmable-logic/genesys-2/reference-manual) and the [Agilex 7 Development Kit](https://www.intel.la/content/www/xl/es/products/details/fpga/development-kits/agilex/agf014.html) by [OpenHW Foundation](https://github.com/openhwgroup/cva6). [The fork of Nicolas Derumigny](https://github.com/NicolasDerumigny/cva6) I'm based on implements on the [AMD Zynq MPSoC Ultrascale+ ZCU104 board](https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/zcu104.html) I use, and also on the [PYNQ-Z2 board](https://www.amd.com/en/corporate/university-program/aup-boards/pynq-z2.html).
+> Please note that since I've only focused on the ZCU104 board, support for other cited boards or even the original ZCU104 scripts by Nicolas Derumigny __may be broken__.
 
-- The first step of my project is to implement direct access to the JTAG channel from the USB cable instead of booting an Arm-side Linux and accessing it through a Xilinx Virtual Cable (XVC) intermediary, to remove total dependence on the PS-side.
+- The first stage of my project is to implement direct access to the JTAG channel from the USB cable instead of booting an Arm-side Linux and accessing it through a Xilinx Virtual Cable (XVC) intermediary, to remove total dependence on the PS-side.
 
   Instead of an AXI-to-JTAG interconnection between the PS-side and the Debug Module, the JTAG TAP logic is passed to the internal BSCANE2 tunnels to interconnect with the PL's JTAG.
 
-  To do so, I updated the [riscv-dbg](https://github.com/KilyannBrault/riscv-dbg) submodule to add BSCAN support, and patched the DTMCS register to add a minimum of 4 cycles between DMI requests, and end one cycle later.
+  To do so, I updated the [riscv-dbg](https://github.com/KilyannBrault/riscv-dbg) submodule to add BSCAN support, and patched the DTMCS register to add a minimum of 4 cycles between DMI requests, and end one cycle later. With a global clock of 75 MHz on a ZCU104 board, 6 cycles are added to uncap the JTAG maximum bus speed limit.
 
-  I also patched [OpenOCD 0.12.0](https://github.com/KilyannBrault/openocd) to add cycles based on the DTMCS register.
+  I also patched [OpenOCD 0.12.0](https://github.com/KilyannBrault/openocd) to account idle cycles based on the DTMCS register.
 
-- The second step of the project is to maximize board resources available to the implemented Linux (current step).
+- The second stage of the project is to maximize board resources available to the implemented Linux (current step) like GPIOs (LEDs, Push buttons) or even a dedicated hardware accelerator based on DSPs cells. Also, I'd like to upgrade the available RAM capacity from 1GB to 2GB.
+
+- Linux has been succesfully booted from the ZCU104 board, using [Nicolas Derumigny's CVA6 SDK fork repository](https://github.com/NicolasDerumigny/cva6-sdk).
 
 ## Installation process
 To install this project, clone it from GitHub and initialize the submodules:
@@ -26,14 +29,17 @@ Then install the [RISC-V Toolchain prerequisites](util/toolchain-builder/README.
 
 To generate the Bitstream, please follow the instructions in [tutorials/fpga.md](tutorials/fpga.md).
 
-You also have to follow the instructions to [compile OpenOCD](https://github.com/KilyannBrault/openocd#installation-instructions), and to [compile and boot Linux on a SD card](https://github.com/NicolasDerumigny/cva6-sdk#booting-from-an-sd-card). You also need a [MTA8ATF1G64HZ-compatible SO-DIMM memory](https://www.micron.com/products/memory/dram-modules/sodimm/part-catalog/part-detail/mta8atf1g64hz-3g2r1) and a [PMOD-microSD card adapter](https://digilent.com/reference/pmod/pmodmicrosd/start) to plug on PMOD0 port (the integrated microSD card reader cannot be use by the implementation).
+You also have to follow the instructions to [compile OpenOCD](https://github.com/KilyannBrault/openocd#installation-instructions), and to [compile and boot Linux on a SD card](https://github.com/NicolasDerumigny/cva6-sdk#booting-from-an-sd-card). You also need a [MTA8ATF1G64HZ-compatible SO-DIMM memory](https://www.micron.com/products/memory/dram-modules/sodimm/part-catalog/part-detail/mta8atf1g64hz-3g2r1) and a [PMOD-microSD card adapter](https://digilent.com/reference/pmod/pmodmicrosd/start) to plug on PMOD0 port (the integrated microSD card reader cannot be use by the implementation). You don't need a high capacity microSD card, 2GB should suffice.
 
 Finally, to debug the CVA6 core(s), follow the instructions in [tutorials/fpga.md Debugging section](tutorials/fpga.md#debugging) and/or in [OpenOCD installation](https://github.com/KilyannBrault/openocd#installation-instructions).
 
-_Derumigny's Readme_
-***
+> Please note that additionnal libraries that are not listed by the tutorials may be necessary to install.
 
-This fork of the CVA6 contains several experimental changes compared to the upstream version for
+***
+_[Derumigny's Readme](https://github.com/NicolasDerumigny/cva6)_
+# CVA6 MPSoC
+
+Derumigny's fork of the CVA6 contains several experimental changes compared to the upstream version for
 research purposes. Main changes are:
   - Wrapping of the CoreV SoC core elements in Vivado 2024.1-compatible block design primitives (based initially on [this project](https://github.com/cispa/CVA6-Vivado-Project-with-Xilinx-AXI-Ethernet/)).
   - Support of the ZCU104 (@ 50 / 75 MHz) and PYNQ-Z2 (@ 25 MHz) boards
@@ -42,8 +48,8 @@ research purposes. Main changes are:
 
 This fork is manually kept up-to-date with respect to the upstream repo on a case-by-case basis.
 
-_Original Readme_
 ***
+_[Original Readme](https://github.com/openhwgroup/cva6)_
 # CVA6 RISC-V CPU [![Build Status](https://github.com/openhwgroup/cva6/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/openhwgroup/cva6/actions/workflows/ci.yml) [![CVA6 dashboard](https://riscv-ci.pages.thales-invia.fr/dashboard/badge_master.svg)](https://riscv-ci.pages.thales-invia.fr/dashboard/dashboard_cva6.html) [![Documentation Status](https://readthedocs.com/projects/openhw-group-cva6-user-manual/badge/?version=latest)](https://docs.openhwgroup.org/projects/cva6-user-manual/?badge=latest) [![GitHub release](https://img.shields.io/github/release/openhwgroup/cva6?include_prereleases=&sort=semver&color=blue)](https://github.com/openhwgroup/cva6/releases/)
 
 CVA6 is a 6-stage, single-issue, in-order CPU which implements the 64-bit RISC-V instruction set. It fully implements I, M, A and C extensions as specified in Volume I: User-Level ISA V 2.3 as well as the draft privilege extension 1.10. It implements three privilege levels M, S, U to fully support a Unix-like operating system. Furthermore, it is compliant to the draft external debug spec 0.13.
@@ -52,7 +58,7 @@ It has a configurable size, separate TLBs, a hardware PTW and branch-prediction 
 
 The CVA6 core is part of a vivid ecosystem. In [this document](RESOURCES.md), we gather pointers to this ecosystem (building blocks, designs, partners...).
 
-A performance model of CVA6 is available in the `perf-model/` folder of this repository.
+A performance model of CVA6 is available in the [`perf-model`](perf-model/) folder of this repository.
 It can be used to investigate performance-related micro-architecture changes.
 
 <img src="docs/03_cva6_design/_static/ariane_overview.drawio.png"/>
@@ -60,7 +66,7 @@ It can be used to investigate performance-related micro-architecture changes.
 
 # Quick setup
 
-The following instructions will allow you to compile and run a Verilator model of the CVA6 APU (which instantiates the CVA6 core) within the CVA6 APU testbench (corev_apu/tb).
+The following instructions will allow you to compile and run a Verilator model of the CVA6 APU (which instantiates the CVA6 core) within the CVA6 APU testbench in [corev_apu/tb](corev_apu/tb/).
 
 Throughout all build and simulations scripts executions, you can use the environment variable `NUM_JOBS` to set the number of concurrent jobs launched by `make`:
 - if left undefined, `NUM_JOBS` will default to 1, resulting in a sequential execution
@@ -118,8 +124,8 @@ bash verif/regress/smoke-tests.sh
 # Directory Structure
 
 The directory structure separates the [CVA6 RISC-V CPU](#cva6-risc-v-cpu) core from the [CORE-V-APU FPGA Emulation Platform](#corev-apu-fpga-emulation).
-Files, directories and submodules under `cva6` are for the core _only_ and should not have any dependencies on the APU.
-Files, directories and submodules under `corev_apu` are for the FPGA Emulation platform.
+Files, directories and submodules under [`core`](core/) are for the core _only_ and should not have any dependencies on the APU.
+Files, directories and submodules under [`corev_apu`](corev_apu/) are for the FPGA Emulation platform.
 The CVA6 core can be compiled stand-alone, and obviously the APU is dependent on the core.
 
 The top-level directories of this repo:
@@ -149,7 +155,7 @@ This BSP is used by both `core` testbench and `uvmt_cva6` UVM verification envir
 We highly appreciate community contributions.
 To ease the work of reviewing contributions, please review [CONTRIBUTING](CONTRIBUTING.md).
 
-Contributions to the documentation (`docs/` and `tutorials/` directories) are very welcome as well.
+Contributions to the documentation ([`docs/`](docs/) and [`tutorials/`](tutorials/) directories) are very welcome as well.
 
 If you find any problems or issues with CVA6 or the documentation, please check out the [issue tracker](https://github.com/openhwgroup/cva6/issues)
 and create a new issue if your problem is not yet tracked. \
